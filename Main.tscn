@@ -1,0 +1,237 @@
+[gd_scene load_steps=25 format=2]
+
+[ext_resource path="res://Main.gd" type="Script" id=1]
+[ext_resource path="res://CameraOrigin.gd" type="Script" id=2]
+[ext_resource path="res://Earth.gd" type="Script" id=3]
+[ext_resource path="res://Utils/CurvedPath.tres" type="Material" id=4]
+[ext_resource path="res://Images/Earth/4096_earth_albedo.jpg" type="Texture" id=5]
+[ext_resource path="res://Images/Earth/4096_earth.jpg" type="Texture" id=6]
+[ext_resource path="res://Images/Earth/4096_clouds.jpg" type="Texture" id=7]
+[ext_resource path="res://Images/Earth/4096_normal.jpg" type="Texture" id=8]
+[ext_resource path="res://Kingdom.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Utils/Indicator.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Images/UI/fade.png" type="Texture" id=11]
+[ext_resource path="res://Selector.gd" type="Script" id=12]
+[ext_resource path="res://Images/Sky/space_spherical_map_by_cesium135-d5qay53.jpg" type="Texture" id=13]
+
+[sub_resource type="SphereMesh" id=1]
+
+[sub_resource type="SpatialMaterial" id=2]
+albedo_texture = ExtResource( 5 )
+metallic = 0.3
+metallic_specular = 0.55
+metallic_texture = ExtResource( 7 )
+metallic_texture_channel = 4
+roughness = 0.29
+emission_enabled = true
+emission = Color( 0, 0, 0, 1 )
+emission_energy = 0.49
+emission_operator = 0
+emission_on_uv2 = false
+emission_texture = ExtResource( 6 )
+normal_enabled = true
+normal_scale = 1.0
+normal_texture = ExtResource( 8 )
+
+[sub_resource type="SpatialMaterial" id=3]
+flags_transparent = true
+albedo_color = Color( 0.0431373, 0.227451, 0.364706, 0.360784 )
+roughness = 0.11
+
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0.772549, 0.560784, 0, 1 )
+border_color = Color( 0, 0, 0, 1 )
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+shadow_color = Color( 0, 0, 0, 0.192157 )
+shadow_size = 2
+
+[sub_resource type="Gradient" id=5]
+offsets = PoolRealArray( 0, 0.509146, 1 )
+colors = PoolColorArray( 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=6]
+gradient = SubResource( 5 )
+
+[sub_resource type="ParticlesMaterial" id=7]
+emission_shape = 1
+emission_sphere_radius = 8.0
+spread = 180.0
+flatness = 1.0
+gravity = Vector3( 0, 0, 0 )
+angular_velocity = 9.0
+scale_random = 1.0
+color_ramp = SubResource( 6 )
+
+[sub_resource type="SpatialMaterial" id=8]
+flags_transparent = true
+vertex_color_use_as_albedo = true
+emission_enabled = true
+emission = Color( 0.94902, 0.960784, 0.596078, 1 )
+emission_energy = 1.0
+emission_operator = 0
+emission_on_uv2 = false
+
+[sub_resource type="SphereMesh" id=9]
+material = SubResource( 8 )
+radius = 0.03
+height = 0.06
+radial_segments = 4
+rings = 1
+
+[sub_resource type="PanoramaSky" id=10]
+panorama = ExtResource( 13 )
+
+[sub_resource type="Environment" id=11]
+background_mode = 2
+background_sky = SubResource( 10 )
+auto_exposure_enabled = true
+auto_exposure_scale = 0.3
+dof_blur_far_distance = 0.08
+dof_blur_far_transition = 189.91
+dof_blur_far_amount = 0.16
+glow_enabled = true
+
+[node name="Main" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="CameraOrigin" type="Spatial" parent="."]
+editor/display_folded = true
+transform = Transform( 0.993316, -0.0675598, 0.0935844, 0, 0.810798, 0.585326, -0.115423, -0.581414, 0.805379, 0, 0, 0 )
+script = ExtResource( 2 )
+
+[node name="Camera" type="Camera" parent="CameraOrigin"]
+transform = Transform( 1, -1.32248e-07, 4.91738e-07, 2.23517e-08, 0.892875, -0.450304, -7.45058e-09, 0.450304, 0.892876, -0.672464, -0.643482, 2.56179 )
+fov = 47.6221
+
+[node name="Tween" type="Tween" parent="CameraOrigin"]
+
+[node name="Earth" type="Spatial" parent="."]
+editor/display_folded = true
+script = ExtResource( 3 )
+connector_material = ExtResource( 4 )
+
+[node name="Globe" type="MeshInstance" parent="Earth"]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0 )
+mesh = SubResource( 1 )
+material/0 = SubResource( 2 )
+
+[node name="Shell" type="MeshInstance" parent="Earth"]
+transform = Transform( -4.50227e-08, 0, -1.03, 0, 1.03, 0, 1.03, 0, -4.50227e-08, 0, 0, 0 )
+mesh = SubResource( 1 )
+material/0 = SubResource( 3 )
+
+[node name="Kingdom1" parent="Earth" groups=[
+"kingdoms",
+] instance=ExtResource( 9 )]
+transform = Transform( 0.993316, -0.0675598, 0.0935851, 0, 0.8108, 0.585323, -0.115423, -0.581411, 0.805381, 0, 0, 0 )
+kingdom_name = "World 1"
+
+[node name="Kingdom2" parent="Earth" groups=[
+"kingdoms",
+] instance=ExtResource( 9 )]
+transform = Transform( 0.795635, -0.280689, 0.536823, 0.422642, 0.892067, -0.15997, -0.43398, 0.354161, 0.82839, 0, 0, 0 )
+kingdom_name = "World 2"
+
+[node name="Kingdom3" parent="Earth" groups=[
+"kingdoms",
+] instance=ExtResource( 9 )]
+transform = Transform( -0.234909, -0.449158, 0.862018, 0.35422, 0.786295, 0.50623, -0.905178, 0.424262, -0.025607, 0, 0, 0 )
+kingdom_name = "World 3"
+
+[node name="Kingdom4" parent="Earth" groups=[
+"kingdoms",
+] instance=ExtResource( 9 )]
+transform = Transform( -0.542005, -0.505837, 0.671089, 0.281351, 0.643252, 0.712087, -0.791879, 0.574767, -0.206328, 0, 0, 0 )
+kingdom_name = "World 4"
+
+[node name="Kingdom5" parent="Earth" groups=[
+"kingdoms",
+] instance=ExtResource( 9 )]
+transform = Transform( -0.979365, 0.0244213, 0.200619, 0.0601578, 0.982903, 0.174023, -0.192939, 0.182502, -0.964089, 0, 0, 0 )
+kingdom_name = "World 5"
+
+[node name="Kingdom6" parent="Earth" groups=[
+"kingdoms",
+] instance=ExtResource( 9 )]
+transform = Transform( -0.724162, 0.562091, -0.399553, 0.159944, 0.700468, 0.69553, 0.670826, 0.439771, -0.597155, 0, 0, 0 )
+kingdom_name = "World 6"
+
+[node name="Kingdom7" parent="Earth" groups=[
+"kingdoms",
+] instance=ExtResource( 9 )]
+transform = Transform( -0.727903, 0.0970307, -0.67878, 0.571651, 0.63254, -0.522599, 0.378647, -0.768427, -0.515894, 0, 0, 0 )
+kingdom_name = "World 7"
+
+[node name="Indicator" parent="Earth" instance=ExtResource( 10 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.088827, 0.592173, 0.819645 )
+
+[node name="HUD" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -0.430603
+margin_bottom = -0.430603
+
+[node name="TextureRect" type="TextureRect" parent="HUD"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -250.0
+margin_bottom = 40.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+texture = ExtResource( 11 )
+expand = true
+stretch_mode = 1
+
+[node name="Selector" type="PanelContainer" parent="HUD"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -20.0
+margin_top = -53.6383
+margin_right = 20.0
+margin_bottom = -39.6383
+grow_horizontal = 2
+rect_min_size = Vector2( 40, 14 )
+custom_styles/panel = SubResource( 4 )
+script = ExtResource( 12 )
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/Selector"]
+margin_right = 40.0
+margin_bottom = 14.0
+custom_constants/margin_right = 20
+custom_constants/margin_top = 0
+custom_constants/margin_left = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HUD/Selector/MarginContainer"]
+margin_left = 20.0
+margin_right = 20.0
+margin_bottom = 14.0
+custom_constants/separation = 40
+alignment = 1
+
+[node name="Particles" type="Particles" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.999942, 0.0108065, 0, -0.0108065, 0.999942, 0, 3.00065, 0 )
+amount = 100
+lifetime = 5.0
+preprocess = 5.0
+explosiveness = 0.85
+randomness = 1.0
+visibility_aabb = AABB( -5.81188, -4.0874, -6.09578, 11.6238, 8.17476, 12.1916 )
+process_material = SubResource( 7 )
+draw_pass_1 = SubResource( 9 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 11 )
+
+[node name="OmniLight" type="OmniLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.24732, 2.43326 )
+light_energy = 2.5
+light_specular = 1.0
+omni_range = 23.2
+[connection signal="kingdom_selected" from="." to="CameraOrigin" method="_on_kingdom_selected"]
+[connection signal="kingdom_selected" from="." to="Earth/Indicator" method="_on_kingdom_selected"]
